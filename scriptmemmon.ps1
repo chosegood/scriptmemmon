@@ -1,4 +1,7 @@
-Param([int]$process_identifier)
+param(
+    [int]$script_number,
+    [int]$process_identifier
+)
 
 function GetProcessInfoById {
     param
@@ -12,4 +15,18 @@ function GetProcessInfoById {
     @{Name="Private Working Set"; Expression = {$_.workingSetPrivate / 1kb}}
 }
 
-GetProcessInfoById $process_identifier
+$scriptExecutionStart = Get-Date -format yyyyMMdd_HHmmss
+$outputDir = "C:\temp\script" + $script_number + "\" + $scriptExecutionStart
+$outputFile = $outputDir + "\output.txt"
+[int]$i = 0
+
+write-output "Creating output directory: " $outputDir
+md -Path $outputDir
+write-output "Appended results to " + $outputFile
+
+do {
+    "Hit Enter to take snapshot " + ++$i + " [ctrl-c to quit]";
+    [Console]::ReadLine()
+    "Step " + $i >> $outputFile
+    GetProcessInfoById $process_identifier >> $outputFile
+} while (1 -eq 1)
